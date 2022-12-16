@@ -21,6 +21,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('mac_address')->nullable()->index();
             $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
