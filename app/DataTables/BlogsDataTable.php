@@ -81,8 +81,7 @@ class BlogsDataTable extends DataTable
                   ->addClass('text-center'),
             Column::make('id')->searchable(false),
             Column::make('title')->searchable(true),
-            Column::make('blog_content')->searchable(false),
-            Column::make('image')->searchable(false)->render(@"'<img src =\"'"."+data+'"."\"  width=\"90\" >'"),
+//            Column::make('image')->searchable(false)->render(@"'<img src =\"'"."+data+'"."\"  width=\"90\" >'"),
             Column::make('published_at')->searchable(false),
             Column::make('created_at')->searchable(false),
         ];

@@ -21,9 +21,10 @@ Route::get('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->n
 
 Route::group(['middleware'=>['auth:web']],function (){
     Route::get('blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware('role:Admin');
+    Route::get('/', [BlogController::class, 'getBlogs'])->name('home');
+    Route::get('/list-blog/{blog}', [BlogController::class, 'show'])->name('blogs.show');
 });
 
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 

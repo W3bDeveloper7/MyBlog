@@ -44,7 +44,7 @@ class BlogRepository implements BlogRepositoryInterface{
 
     public function show($blog)
     {
-        // TODO: Implement show() method.
+        return view('blogs.view', compact('blog'));
     }
 
     public function update($blog, $request)
@@ -55,5 +55,15 @@ class BlogRepository implements BlogRepositoryInterface{
     public function delete($blog)
     {
         // TODO: Implement delete() method.
+    }
+
+    public function getBlogs($request)
+    {
+        if($request->ajax() || $request->wantsJson()){
+            $data = BlogIndexResource::collection(Blog::latest()->paginate(9));
+            return $data;
+        }
+        return view('home');
+
     }
 }

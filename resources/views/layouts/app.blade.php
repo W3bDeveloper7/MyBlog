@@ -50,11 +50,26 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
+                                <a class="nav-link" href="{{ route('home') }}">{{ __('Home Page') }}</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="">{{ __('List Blogs') }}</a>
+                            </li>
+                            <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    @if(auth()->user()->isAdmin())
+                                        <a class="dropdown-item" href="">
+                                            {{ __('Manage Users') }}
+                                        </a>
+                                        <a class="dropdown-item" href="">
+                                            {{ __('Manage Blogs') }}
+                                        </a>
+                                    @endif
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -77,5 +92,10 @@
         </main>
     </div>
     @stack('scripts')
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+    </script>
+    @yield('scripts')
 </body>
 </html>
