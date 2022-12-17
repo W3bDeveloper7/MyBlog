@@ -56,6 +56,7 @@ class BlogsDataTable extends DataTable
                     //->dom('Bfrtip')
                     ->orderBy(1)
                     ->selectStyleSingle()
+                    ->parameters($this->getBuilderParameters())
                     ->buttons([
                         Button::make('excel'),
                         Button::make('csv'),
@@ -74,16 +75,16 @@ class BlogsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::computed('action')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
-            Column::make('id')->searchable(false),
+            //Column::make('id')->searchable(false),
             Column::make('title')->searchable(true),
-//            Column::make('image')->searchable(false)->render(@"'<img src =\"'"."+data+'"."\"  width=\"90\" >'"),
+            Column::make('image')->searchable(false)->render(@"'<img src =\"/images/'"."+data+'"."\"  width=\"90\" >'"),
             Column::make('published_at')->searchable(false),
             Column::make('created_at')->searchable(false),
+            Column::computed('action')
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 

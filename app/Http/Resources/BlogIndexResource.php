@@ -24,6 +24,7 @@ class BlogIndexResource extends JsonResource
             'published_at' => \Carbon\Carbon::parse($this->published_at)->diffForHumans(),
             'status' => $this->status,
             'user_id' => $this->user_id,
+            'action' => '<a href="'.route('blogs.show', $this->id).'" class="edit btn btn-success btn-sm">view</a>',
 
         ];
     }

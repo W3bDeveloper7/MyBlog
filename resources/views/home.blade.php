@@ -14,7 +14,7 @@
 
 @section('scripts')
     <script>
-        $(document).ready(function(){
+        $(()=>{
             var page;
             fetch_data()
             $(document).on('click', '.pagination a', function(e){

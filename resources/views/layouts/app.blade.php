@@ -53,7 +53,7 @@
                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Home Page') }}</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link" href="">{{ __('List Blogs') }}</a>
+                                <a class="nav-link" href="{{ route('blogs.list') }}">{{ __('List Blogs') }}</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -65,7 +65,7 @@
                                         <a class="dropdown-item" href="">
                                             {{ __('Manage Users') }}
                                         </a>
-                                        <a class="dropdown-item" href="">
+                                        <a class="dropdown-item" href="{{route('blogs.index')}}">
                                             {{ __('Manage Blogs') }}
                                         </a>
                                     @endif
