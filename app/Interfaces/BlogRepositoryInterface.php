@@ -3,7 +3,7 @@
 namespace App\Interfaces;
 
 interface BlogRepositoryInterface {
-    public function index();
+    public function index($request, $dataTable);
     public function show($blog);
     public function update($blog, $request);
     public function delete($blog);

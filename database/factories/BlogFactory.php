@@ -19,7 +19,7 @@ class BlogFactory extends Factory
     {
         return [
             'title' => $this->faker->unique()->realText(50),
-            'content' => $this->faker->paragraph(15),
+            'blog_content' => $this->faker->paragraph(15),
             'published_at' => now(),
             'image' => $this->faker->imageUrl(640, 480, 'sports', true, 'football'),
             'user_id'   => 1,
