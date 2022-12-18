@@ -62,7 +62,7 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     @if(auth()->user()->isAdmin())
-                                        <a class="dropdown-item" href="">
+                                        <a class="dropdown-item" href="{{route('users.index')}}">
                                             {{ __('Manage Users') }}
                                         </a>
                                         <a class="dropdown-item" href="{{route('blogs.index')}}">

@@ -13,7 +13,7 @@ class RegisterRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,11 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name'=> 'required|min:5',
+            'username' => 'required|unique:users,username,'.$this->user()->id,
+            'status'    => 'required|in:0,1',
+            'password'  => 'required|min:8',
+            'role_id'  => 'required|exists:roles,id',
         ];
     }
 }

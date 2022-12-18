@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -23,13 +24,16 @@ class AuthController extends Controller
         })->first();
         if ($row)
         {
-            if ($row->status ==0)
+            if ($row->status == 0)
             {
                 return redirect()->back()->with('message','Your Account Is DisActive Back To Admin');
             }
             if (Hash::check($request->password,$row->password))
             {
                 auth()->login($row,$request->remember);
+                if(!auth()->user()->isAdmin()){
+                    Auth::logoutOtherDevices($request->password);
+                }
                 return redirect()->intended('/');
             }
         }
