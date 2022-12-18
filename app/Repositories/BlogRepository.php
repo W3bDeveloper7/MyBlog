@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Http\Resources\BlogIndexResource;
 use App\Http\Resources\BlogManageResource;
+use App\Http\Resources\BlogManageTrashedResource;
 use App\Interfaces\BlogRepositoryInterface;
 use App\Models\Blog;
 use DataTables;
@@ -115,6 +116,58 @@ class BlogRepository implements BlogRepositoryInterface{
         }
         return view('blogs.list');
 
+    }
+
+    /*
+     * Get Trashed users
+     */
+    public function trashed($request)
+    {
+        if($request->ajax() || $request->wantsJson()){
+            $data = Blog::onlyTrashed()->latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->setTransformer(function ($item){
+                    return BlogManageTrashedResource::make($item)->resolve();
+                })
+                ->filter(function ($instance) use ($request) {
+                    if (!empty($request->get('name'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['name'], $request->get('name')) ? true : false;
+                        });
+                    }
+
+                    if (!empty($request->get('username'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['username'], $request->get('username')) ? true : false;
+                        });
+                    }
+
+                    if (!empty($request->get('status'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['status'], $request->get('status')) ? true : false;
+                        });
+                    }
+
+                    if (!empty($request->get('role_id'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['role_id'], $request->get('role_id')) ? true : false;
+                        });
+                    }
+
+                    if (!empty($request->get('search'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            if (Str::contains(Str::lower($row['name']), Str::lower($request->get('search')))) {
+                                return true;
+                            }
+
+                            return false;
+                        });
+                    }
+                }, true)
+                ->make(true);
+        }
+        return view('blogs.trashed');
     }
 
 }

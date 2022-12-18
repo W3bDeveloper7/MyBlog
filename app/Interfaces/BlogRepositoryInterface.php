@@ -9,4 +9,7 @@ interface BlogRepositoryInterface {
     public function show($blog, $request);
     public function store($request);
     public function delete($blog);
+    public function trashed($request);
+    public function restore($blog);
+    public function deletePermanent($blog);
 }
