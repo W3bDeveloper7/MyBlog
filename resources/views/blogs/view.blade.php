@@ -5,7 +5,11 @@
     <div class="container">
         <div class="row justify-content-start">
             <div class="col-6 pt-4">
-                <img src="{{ $blog->image }}" class="img-thumbnail img-fluid">
+                @if(filter_var($blog->image, FILTER_VALIDATE_URL))
+                    <img src="{{ $blog->image }}" class="img-thumbnail img-fluid">
+                @else
+                    <img src="{{ url('images').'/'.$blog->image }}" class="img-thumbnail img-fluid">
+                @endif
             </div>
             <div class="col-6 pt-5">
                 <div class="post-heading pt-5">

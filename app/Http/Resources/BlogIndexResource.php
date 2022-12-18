@@ -20,9 +20,9 @@ class BlogIndexResource extends JsonResource
             'id'    =>  $this->id,
             'title'    =>  $this->title,
             'blog_content'    =>  Str::limit($this->blog_content, 1),
-            'image' => '<image class="card-img" src="'.$this->image.'">',
+            'image' => (filter_var($this->image, FILTER_VALIDATE_URL)) ? '<image class="card-img" src="'.$this->image.'">' : '<image class="card-img" src="'.url('images').'/'.$this->image.'">',
             'published_at' => \Carbon\Carbon::parse($this->published_at)->diffForHumans(),
-            'status' => $this->status,
+            'status' => ($this->status === 1) ? 'Active' : 'Disabled',
             'user_id' => $this->user_id,
             'action' => '<a href="'.route('blogs.show', $this->id).'" class="edit btn btn-success btn-sm">view</a>',
 
