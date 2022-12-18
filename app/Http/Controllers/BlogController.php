@@ -35,4 +35,22 @@ class BlogController extends Controller
     public function store(BlogStoreRequest $request){
         return $this->blogRepository->store($request);
     }
+
+    public function delete(Blog $blog){
+        return $this->blogRepository->delete($blog);
+    }
+
+    public function trashed(Request $request){
+        return $this->blogRepository->trashed($request);
+    }
+
+    public function restoreBlog($blog){
+        $blog = Blog::withTrashed()->find($blog);
+        return $this->blogRepository->restore($blog);
+    }
+
+    public function deletePermanent($blog){
+        $blog = Blog::withTrashed()->find($blog);
+        return $this->blogRepository->deletePermanent($blog);
+    }
 }
