@@ -142,6 +142,28 @@
             </div>
         </div>
     </div>
+
+    <div class="modal" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="deleteModalHeading" class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="deleteForm" name="blogForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="user_id" id="blog_id_delete" />
+                        <input type="hidden" name="_method" value="DELETE" />
+                    </form>
+                    <p id="nameDelete" ></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-danger" id="saveBtnDelete" value="create">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -288,6 +310,47 @@
                 e.preventDefault()
                 table.draw()
             })
+//=================================================================================//
+            /*
+            Handle Delete Btn
+             */
+            $('body').on('click', '.delete', function (e) {
+                e.preventDefault();
+                var blog_id = $(this).data('id');
+                $.get("/list-blog" +'/' + blog_id , function (data) {
+                    $('#deleteModalHeading').html("Delete "+ data.title);
+                    $('#saveBtnDelete').val("delete-blog");
+                    $('#nameDelete').html("Are you sure you want to delete <strong >" + data.title + "</strong>?");
+                    let myModal = new Modal(document.getElementById('deleteModal'));
+                    myModal.show();
+                    $('#blog_id_delete').val(blog_id);
+                })
+            });
+
+            $("body").on("click","#saveBtnDelete",function(e){
+                e.preventDefault()
+                var form = $(this).closest("form")[0];
+                var formData = new FormData($(this).closest("form")[0]);
+                $.ajax({
+                    url: '/blogs/'+ $('#blog_id_delete').val(),
+                    type: 'DELETE',
+                    data: formData,
+                    success: function (response) {
+                        $(".print-success-msg").find("p").html('');
+                        $(".print-success-msg").css('display','block');
+                        $(".print-success-msg").find("p").html("Deleted Successfully");
+                        table.draw();
+                        let myModal =  Modal.getOrCreateInstance(document.getElementById('deleteModal'));
+                        myModal.hide();
+                    },
+                    error: function (response){
+                        printErrorMsg(response.responseJSON.errors)
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            });
     })
     </script>
 @endsection

@@ -21,12 +21,16 @@ Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::get('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 Route::group(['middleware'=>['auth:web']],function (){
-    //
+    //Blogs Routes
     Route::get('blogs', [BlogController::class, 'index'])->name('blogs.index')->middleware('role:Admin');
     Route::get('/', [BlogController::class, 'getBlogs'])->name('home');
     Route::get('/list-blogs', [BlogController::class, 'getBlogsDT'])->name('blogs.list');
     Route::get('/list-blog/{blog}', [BlogController::class, 'show'])->name('blogs.show');
-    Route::post('blogs', [BlogController::class, 'store'])->name('blogs.store')->middleware('role:Admin');;
+    Route::post('blogs', [BlogController::class, 'store'])->name('blogs.store')->middleware('role:Admin');
+    Route::delete('blogs/{blog}', [BlogController::class, 'delete'])->name('blogs.delete');
+    Route::post('restore-blog/{blog}', [BlogController::class, 'restoreBlog'])->name('blogs.restore');
+    Route::post('delete-blog-permanent/{blog}', [BlogController::class, 'deletePermanent'])->name('blogs.delete.permanent');
+    Route::get('trashed-blogs', [BlogController::class, 'trashed'])->name('blogs.trashed')->middleware('role:Admin');
 
     //Users Routes
     Route::get('users', [UserController::class, 'index'])->name('users.index')->middleware('role:Admin');
