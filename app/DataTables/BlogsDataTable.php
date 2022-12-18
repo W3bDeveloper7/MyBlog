@@ -6,6 +6,7 @@ use App\Http\Resources\BlogIndexResource;
 use App\Models\Blog;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Str;
+use Yajra\DataTables\DataTables;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
@@ -13,6 +14,7 @@ use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+
 
 use function Termwind\render;
 
@@ -97,4 +99,5 @@ class BlogsDataTable extends DataTable
     {
         return 'Blogs_' . date('YmdHis');
     }
+
 }

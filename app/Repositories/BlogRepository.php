@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Http\Resources\BlogIndexResource;
+use App\Http\Resources\BlogManageResource;
 use App\Interfaces\BlogRepositoryInterface;
 use App\Models\Blog;
 use DataTables;
@@ -11,7 +12,8 @@ class BlogRepository implements BlogRepositoryInterface{
 
     public function index($request, $dataTable)
     {
-        return $dataTable->render('blogs.index');
+
+        //
 //        $users = Blog::paginate(10);
 //
 //        $resource = BlogIndexResource::collection($users);
@@ -30,16 +32,29 @@ class BlogRepository implements BlogRepositoryInterface{
 //            ->rawColumns(['action'])
 //            ->make(true);
 
-//        return DataTables::eloquent(Blog::latest())
-//            ->setTransformer(function ($item){
-//                return BlogIndexResource::make($item)->resolve();
-//            })->addIndexColumn()
-//            ->addColumn('action', function($row){
-//                $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-//                return $actionBtn;
-//            })
-//            ->rawColumns(['action'])
-//            ->make(true);
+//        if($request->ajax() || $request->wantsJson()){
+//            return DataTables::eloquent(Blog::latest())
+//                ->addIndexColumn()
+//                ->rawColumns(['action'])
+////                ->setTransformer(function ($item){
+////                    return BlogManageResource::make($item)->resolve();
+////                })
+//                ->filter(function ($query) {
+//                    if (request()->has('title')) {
+//                        $query->where('title', 'like', "%" . request('title') . "%");
+//                    }
+//
+//                    if (request()->has('published_at')) {
+//                        $query->whereDate('published_at', request('published_at') );
+//                    }
+//
+//                    if (request()->has('status')) {
+//                        $query->where('status', request('status'));
+//                    }
+//                }, true)
+//                ->make(true);
+//        }
+        return $dataTable->render('blogs.index');
     }
 
     public function show($blog, $request)

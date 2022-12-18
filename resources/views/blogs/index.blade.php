@@ -7,11 +7,12 @@
             <div class="card-body">
                 <div class="d-flex align-content-end">
 
-                        <a href="javascript:void(0)" role="button" id="createNewBlog" class="createBlog btn btn-success">Create New Blog</a> &nbsp;
-                        <a href="javascript:void(0)" role="button" class="customSearch btn btn-warning">Custom Search Yajra Fields</a>
+                        <a href="javascript:void(0)" role="button" id="createNewBlog" class="btn btn-success">Create New Blog</a> &nbsp;
+                        <a href="javascript:void(0)" role="button" id="customSearchBlog" class="btn btn-warning">Custom Search Yajra Fields</a>
 
                 </div> <br>
                 {{ $dataTable->table() }}
+
             </div>
         </div>
     </div>
@@ -76,6 +77,54 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="searchModel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modelHeading"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger print-error-msg" style="display:none">
+                        <ul></ul>
+                    </div>
+                    <div class="alert alert-success print-success-msg" style="display:none">
+                        <p></p>
+                    </div>
+                    <form id="searchForm" name="blogForm" class="form-horizontal" enctype="multipart/form-data">
+                        <input type="hidden" name="blog_id" id="blog_id">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Title</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="title_search" name="title" placeholder="Enter Title" value=""  >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Publish Date</label>
+                            <div class="col-sm-12">
+                                <input type="date" class="form-control" id="publish_date_search" name="published_at" placeholder="Enter Publish Date" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Status</label>
+                            <div class="col-sm-12">
+                                <select type="text" class="form-select" id="status_search" name="status">
+                                    <option value="1" selected>Active</option>
+                                    <option value="0">Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-offset-2 col-sm-10 pt-3" >
+                            <button type="submit" class="btn btn-primary" id="searchBtn" value="create">Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -92,7 +141,9 @@
                 }
             });
 //==================================================================================//
-            //edit blog
+            /*
+            Handle Edit Blog Button
+             */
             $('body').on('click', '.edit', function (e) {
                 e.preventDefault();
                 var blog_id = $(this).closest('tr').attr('id');
@@ -103,6 +154,8 @@
                     myModal.show();
                     $('#blog_id').val(blog_id);
                     //$('#image').val(data.image);
+                    $("#image").closest('.form-group').css('display','block');
+                    $("#content").closest('.form-group').css('display','block');
                     $('#title').val(data.title);
                     $('#content').val(data.blog_content);
                     $('#publish-date').val(data.published_date);
@@ -110,7 +163,9 @@
                 })
             });
 //============================================================================================//
-            //Save or update data
+            /*
+            Save or update data
+             */
             $("body").on("click","#saveBtn",function(e){
                 e.preventDefault()
                 var form = $(this).closest("form")[0];
@@ -157,16 +212,57 @@
             }
 
 //====================================================================================//
+            /*
+            create new blog
+             */
             $('#createNewBlog').click(function () {
                 $(".print-error-msg").css('display','none');
                 $(".print-success-msg").css('display','none');
+                $("#image").closest('.form-group').css('display','block');
+                $("#content").closest('.form-group').css('display','block');
                 $('#saveBtn').val("create-Blog");
-                $('#Blog_id').val('');
+                $('#blog_id').val('');
                 $('#blogForm').trigger("reset");
                 $('#modelHeading').html("Create New Blog");
                 let myModal = new Modal(document.getElementById('actionModel'));
                 myModal.show();
             });
-        })
+//==============================================================================//
+        /*
+        Custom Search Yajra
+         */
+        $('#customSearchBlog').click(function () {
+            $(".print-error-msg").css('display','none');
+            $(".print-success-msg").css('display','none');
+            $('#searchBtn').val("search-Blog").text("search Blog");
+            $('#searchForm').trigger("reset");
+            $('#modelHeading').html("Custom Search Yajra");
+            let myModal = new Modal(document.getElementById('searchModel'));
+            myModal.show();
+        });
+//================================================================================//
+            $('#searchBtn').on('click', function(e){
+                e.preventDefault()
+            let table = $('#blogs-table').DataTable();
+                let published = $('#publish_date_search').val();
+                let status = $('#status_search').val();
+                let title = $('#title_search').val();
+                $.ajax({
+                    url: window.location.pathname,
+                    type: 'get',
+                    data: {
+                        published_at: published,
+                        status: status,
+                        title: title,
+                    },
+                    success: function (response) {
+                        table.draw()
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            })
+    })
     </script>
 @endsection
