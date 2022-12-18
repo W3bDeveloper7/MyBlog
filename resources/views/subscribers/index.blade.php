@@ -296,10 +296,6 @@
 //================================================================================//
             $('#searchBtn').on('click', function(e) {
                 e.preventDefault()
-                let username = $('#username_search').val();
-                let status = $('#status_search').val();
-                let name = $('#name_search').val();
-                let role_id = $('#role_id_search').val();
                 table.draw()
             });
 

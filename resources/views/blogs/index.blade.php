@@ -11,7 +11,21 @@
                         <a href="javascript:void(0)" role="button" id="customSearchBlog" class="btn btn-warning">Custom Search Yajra Fields</a>
 
                 </div> <br>
-                {{ $dataTable->table() }}
+
+                <table class="table table-bordered blogs-datatable">
+                    <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Title</th>
+                        <th>Image</th>
+                        <th>Published Date</th>
+                        <th>status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
 
             </div>
         </div>
@@ -82,7 +96,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeading"></h4>
+                    <h4 class="modal-title" id="modelHeadingSearch"></h4>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-danger print-error-msg" style="display:none">
@@ -110,8 +124,9 @@
                             <label class="col-sm-4 control-label">Status</label>
                             <div class="col-sm-12">
                                 <select type="text" class="form-select" id="status_search" name="status">
-                                    <option value="1" selected>Active</option>
-                                    <option value="0">Disabled</option>
+                                    <option value="" selected>Please Select</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Disabled">Disabled</option>
                                 </select>
                             </div>
                         </div>
@@ -127,13 +142,38 @@
     </div>
 @endsection
 
-@push('scripts')
-    {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
-@endpush
-
 @section('scripts')
     <script>
         $(()=>{
+
+            var table = $('.blogs-datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('blogs.index') }}",
+                    data: function (d) {
+                            d.title      = $('#title_search').val(),
+                            d.published_at  = $('#publish_date_search').val(),
+                            d.status    = $('#status_search').val(),
+                            d.search    = $('input[type="search"]').val()
+                    }
+                },
+                columns: [
+
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,
+                        searchable: false},
+                    {data: 'title', name: 'title'},
+                    {data: 'image', name: 'image'},
+                    {data: 'published_at', name: 'published_at'},
+                    {data: 'status', name: 'status'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: true,
+                        searchable: true
+                    },
+                ]
+            });
             //setup ajax header
             $.ajaxSetup({
                 headers: {
@@ -146,13 +186,14 @@
              */
             $('body').on('click', '.edit', function (e) {
                 e.preventDefault();
-                var blog_id = $(this).closest('tr').attr('id');
+                var blog_id = $(this).data('id');
                 $.get("/list-blog" +'/' + blog_id , function (data) {
                     $('#modelHeading').html("Edit Blog");
                     $('#saveBtn').val("edit-user");
                     let myModal = new Modal(document.getElementById('actionModel'));
                     myModal.show();
                     $('#blog_id').val(blog_id);
+                    $(".print-success-msg").css('display','none');
                     //$('#image').val(data.image);
                     $("#image").closest('.form-group').css('display','block');
                     $("#content").closest('.form-group').css('display','block');
@@ -180,7 +221,7 @@
                         $(".print-success-msg").css('display','block');
                         $(".print-success-msg").find("p").html("Success");
                         form.reset();
-                        table.reload()
+                        table.draw()
                     },
                     error: function (response){
                         printErrorMsg(response.responseJSON.errors)
@@ -236,32 +277,14 @@
             $(".print-success-msg").css('display','none');
             $('#searchBtn').val("search-Blog").text("search Blog");
             $('#searchForm').trigger("reset");
-            $('#modelHeading').html("Custom Search Yajra");
+            $('#modelHeadingSearch').html("Custom Search Yajra");
             let myModal = new Modal(document.getElementById('searchModel'));
             myModal.show();
         });
 //================================================================================//
             $('#searchBtn').on('click', function(e){
                 e.preventDefault()
-            let table = $('#blogs-table').DataTable();
-                let published = $('#publish_date_search').val();
-                let status = $('#status_search').val();
-                let title = $('#title_search').val();
-                $.ajax({
-                    url: window.location.pathname,
-                    type: 'get',
-                    data: {
-                        published_at: published,
-                        status: status,
-                        title: title,
-                    },
-                    success: function (response) {
-                        table.draw()
-                    },
-                    cache: false,
-                    contentType: false,
-                    processData: false
-                });
+                table.draw()
             })
     })
     </script>

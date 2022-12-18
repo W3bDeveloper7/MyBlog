@@ -19,13 +19,13 @@ class BlogManageResource extends JsonResource
             'id'    =>  $this->id,
             'title'    =>  $this->title,
             'blog_content'    =>  Str::limit($this->blog_content, 1),
-            'image' => '<image class="card-img" src="'.$this->image.'">',
-            'published_at' => \Carbon\Carbon::parse($this->published_at)->diffForHumans(),
-            'status' => $this->status,
+            'image' => (filter_var($this->image, FILTER_VALIDATE_URL)) ? '<image class="card-img" src="'.$this->image.'">' : '<image class="card-img" src="'.url('images').'/'.$this->image.'">',
+            'published_at' => \Carbon\Carbon::parse($this->published_at)->format('Y-m-d'),
+            'status' => ($this->status === 1) ? 'Active' : 'Disabled',
             'user_id' => $this->user_id,
             'action' => '<div class="btn-group" role="group" aria-label="Basic example">
-    <a href="javascript:void(0)" role="button" class="edit btn btn-info">Edit</a>
-    <a href="javascript:void(0)" role="button" class="delete btn btn-danger">Delete</a>
+    <a href="javascript:void(0)" role="button" data-id="'.$this->id.'" class="edit btn btn-info">Edit</a>
+    <a href="javascript:void(0)" role="button" data-id="'.$this->id.'" class="delete btn btn-danger">Delete</a>
 </div>',
 
         ];

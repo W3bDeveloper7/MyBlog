@@ -7,54 +7,52 @@ use App\Http\Resources\BlogManageResource;
 use App\Interfaces\BlogRepositoryInterface;
 use App\Models\Blog;
 use DataTables;
+use Illuminate\Support\Str;
 
 class BlogRepository implements BlogRepositoryInterface{
 
     public function index($request, $dataTable)
     {
 
-        //
-//        $users = Blog::paginate(10);
-//
-//        $resource = BlogIndexResource::collection($users);
-//        $users = \App\Models\Blog::paginate(10);
-//
-//        $resource = \App\Http\Resources\BlogIndexResource::collection($users);
+        if($request->ajax() || $request->wantsJson()){
+            $data = Blog::latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->setTransformer(function ($item){
+                    return BlogManageResource::make($item)->resolve();
+                })
+                ->filter(function ($instance) use ($request) {
+                    if (!empty($request->get('title'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['title'], $request->get('title')) ? true : false;
+                        });
+                    }
 
+                    if (!empty($request->get('published_at'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['published_at'], $request->get('published_at')) ? true : false;
+                        });
+                    }
 
-        //$data = BlogIndexResource::collection(Blog::latest()->get())->collection->pluck('resource');
-//        return Datatables::of($resource)
-//            ->addIndexColumn()
-//            ->addColumn('action', function($row){
-//                $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-//                return $actionBtn;
-//            })
-//            ->rawColumns(['action'])
-//            ->make(true);
+                    if (!empty($request->get('status'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['status'], $request->get('status')) ? true : false;
+                        });
+                    }
 
-//        if($request->ajax() || $request->wantsJson()){
-//            return DataTables::eloquent(Blog::latest())
-//                ->addIndexColumn()
-//                ->rawColumns(['action'])
-////                ->setTransformer(function ($item){
-////                    return BlogManageResource::make($item)->resolve();
-////                })
-//                ->filter(function ($query) {
-//                    if (request()->has('title')) {
-//                        $query->where('title', 'like', "%" . request('title') . "%");
-//                    }
-//
-//                    if (request()->has('published_at')) {
-//                        $query->whereDate('published_at', request('published_at') );
-//                    }
-//
-//                    if (request()->has('status')) {
-//                        $query->where('status', request('status'));
-//                    }
-//                }, true)
-//                ->make(true);
-//        }
-        return $dataTable->render('blogs.index');
+                    if (!empty($request->get('search'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            if (Str::contains(Str::lower($row['title']), Str::lower($request->get('search')))) {
+                                return true;
+                            }
+
+                            return false;
+                        });
+                    }
+                }, true)
+                ->make(true);
+        }
+        return view('blogs.index');
     }
 
     public function show($blog, $request)

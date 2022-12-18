@@ -13,35 +13,10 @@ class UserRepository implements UserRepositoryInterface{
 
     public function index($request)
     {
-
-        //
-//        $users = Blog::paginate(10);
-//
-//        $resource = BlogIndexResource::collection($users);
-//        $users = \App\Models\Blog::paginate(10);
-//
-//        $resource = \App\Http\Resources\BlogIndexResource::collection($users);
-
-
-        //$data = BlogIndexResource::collection(Blog::latest()->get())->collection->pluck('resource');
-//        return Datatables::of($resource)
-//            ->addIndexColumn()
-//            ->addColumn('action', function($row){
-//                $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-//                return $actionBtn;
-//            })
-//            ->rawColumns(['action'])
-//            ->make(true);
-
         if($request->ajax() || $request->wantsJson()){
             $data = User::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->rawColumns(['action'])
-                ->addColumn('action', function($row){
-                        $actionBtn = '<a href="javascript:void(0)" data-id="'.$row->id.'" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" data-id="'.$row->id.'" class="delete btn btn-danger btn-sm">Delete</a>';
-                        return $actionBtn;
-                    })
                 ->setTransformer(function ($item){
                     return UserManageResource::make($item)->resolve();
                 })
