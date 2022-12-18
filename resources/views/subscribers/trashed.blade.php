@@ -3,13 +3,10 @@
 @section('content')
     <div class="container">
         <div class="card">
-            <div class="card-header">Manage Subscribers</div>
+            <div class="card-header">Manage Trashed Subscribers</div>
             <div class="card-body">
                 <div class="d-flex align-content-end">
-
-                        <a href="javascript:void(0)" role="button" id="createNewBlog" class="btn btn-success">Create New Subscriber</a> &nbsp;
                         <a href="javascript:void(0)" role="button" id="customSearchBlog" class="btn btn-warning">Custom Search Yajra Fields</a>
-
                 </div> <br>
                 <table class="table table-bordered subscriber-datatable">
                     <thead>
@@ -26,71 +23,6 @@
                     </tbody>
                 </table>
 
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="actionModel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeading"></h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger print-error-msg" style="display:none">
-                        <ul></ul>
-                    </div>
-                    <div class="alert alert-success print-success-msg" style="display:none">
-                        <p></p>
-                    </div>
-                    <form id="blogForm" name="blogForm" class="form-horizontal" enctype="multipart/form-data">
-                        <input type="hidden" name="user_id" id="user_id">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Name</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value=""  required="">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Username</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username"  required="">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Role</label>
-                            <div class="col-sm-12">
-                                <select type="text" class="form-select" id="role_id" name="role_id">
-                                    <option value="1" selected>Subscriber</option>
-                                    <option value="2">Admin</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Status</label>
-                            <div class="col-sm-12">
-                                <select type="text" class="form-select" id="status" name="status" required="">
-                                    <option value="1" selected>Active</option>
-                                    <option value="0">Disabled</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">password</label>
-                            <div class="col-sm-12">
-                                <input type="password" class="form-control" id="content" placeholder="Enter New Password" name="password" required="" />
-                            </div>
-                        </div>
-
-                        <div class="col-sm-offset-2 col-sm-10 pt-3" >
-                            <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
-                            </button>
-                        </div>
-                    </form>
-                </div>
             </div>
         </div>
     </div>
@@ -167,11 +99,33 @@
                         <input type="hidden" name="user_id" id="user_id_delete" />
                         <input type="hidden" name="_method" value="DELETE" />
                     </form>
-                    <p>Are you sure you want to delete <strong id="nameDelete"></strong>?</p>
+                    <p id="nameDelete" ></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-outline-danger" id="saveBtnDelete" value="create">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteModalP" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="deleteModalHeadingP" class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="deleteForm" name="blogForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="user_id" id="user_id_delete" />
+                        <input type="hidden" name="_method" value="DELETE" />
+                    </form>
+                    <p id="nameDeleteP" ></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-danger" id="saveBtnDeleteP" value="create">Yes, Delete</button>
                 </div>
             </div>
         </div>
@@ -185,7 +139,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('users.index') }}",
+                    url: "{{ route('users.trashed') }}",
                     data: function (d) {
                         d.name      = $('#name_search').val(),
                         d.username  = $('#username_search').val(),
@@ -218,45 +172,36 @@
             });
 //==================================================================================//
             /*
-            Handle Edit Blog Button
-             */
-            $('body').on('click', '.edit', function (e) {
+             Handle restore Btn
+              */
+            $('body').on('click', '.restore', function (e) {
                 e.preventDefault();
-                $(".print-success-msg").css('display','none');
                 var subscriber_id = $(this).data('id');
-                console.log($(this).attr('data_id'))
                 $.get("/list-user" +'/' + subscriber_id , function (data) {
-                    $('#modelHeading').html("Edit Subscriber");
-                    $('#saveBtn').val("edit-user");
-                    let myModal = new Modal(document.getElementById('actionModel'));
+                    $('#deleteModalHeading').html("Restore "+ data.name);
+                    $('#nameDelete').html("Are you sure you want to restore <strong >" + data.name + "</strong>?");
+                    $('#saveBtnDelete').val("restore-user").text('Restore User');
+                    let myModal = new Modal(document.getElementById('deleteModal'));
                     myModal.show();
-                    $('#user_id').val(subscriber_id);
-                    //$('#image').val(data.image);
-                    $('#name').val(data.name);
-                    $('#username').val(data.username);
-                    $('#status').val(data.status);
-                    $('#role_id').val(data.role_id);
+                    $('#user_id_delete').val(subscriber_id);
                 })
             });
-//============================================================================================//
-            /*
-            Save or update data
-             */
-            $("body").on("click","#saveBtn",function(e){
+
+            $("body").on("click","#saveBtnDelete",function(e){
                 e.preventDefault()
                 var form = $(this).closest("form")[0];
                 var formData = new FormData($(this).closest("form")[0]);
                 $.ajax({
-                    url: window.location.pathname,
-                    type: 'POST',
+                    url: '/restore-user/'+ $('#user_id_delete').val(),
+                    type: 'post',
                     data: formData,
                     success: function (response) {
-                        $(".print-error-msg").css('display','none');
                         $(".print-success-msg").find("p").html('');
                         $(".print-success-msg").css('display','block');
-                        $(".print-success-msg").find("p").html("Success");
-                        form.reset();
+                        $(".print-success-msg").find("p").html("Restored Successfully");
                         table.draw();
+                        let myModal =  Modal.getOrCreateInstance(document.getElementById('deleteModal'));
+                        myModal.hide();
                     },
                     error: function (response){
                         printErrorMsg(response.responseJSON.errors)
@@ -265,44 +210,6 @@
                     contentType: false,
                     processData: false
                 });
-            });
-
-            var options = {
-                complete: function(response)
-                {
-                    if($.isEmptyObject(response.responseJSON.error)){
-                        $("input[name='title']").val('');
-                        alert('Image Upload Successfully.');
-                    }else{
-                        printErrorMsg(response.error);
-                    }
-                }
-            };
-
-            function printErrorMsg (msg) {
-                $(".print-success-msg").css('display','none');
-                $(".print-error-msg").find("ul").html('');
-                $(".print-error-msg").css('display','block');
-                $.each( msg, function( key, value ) {
-                    $(".print-error-msg").find("ul").append('<li>'+value+'</li>');
-                });
-            }
-
-//====================================================================================//
-            /*
-            create new blog
-             */
-            $('#createNewBlog').click(function () {
-                $(".print-error-msg").css('display','none');
-                $(".print-success-msg").css('display','none');
-                $("#image").closest('.form-group').css('display','block');
-                $("#content").closest('.form-group').css('display','block');
-                $('#saveBtn').val("create-subscriber");
-                $('#user_id').val('');
-                $('#blogForm').trigger("reset");
-                $('#modelHeading').html("Create New Subscriber");
-                let myModal = new Modal(document.getElementById('actionModel'));
-                myModal.show();
             });
 //==============================================================================//
         /*
@@ -330,31 +237,34 @@
             /*
             Handle Delete Btn
              */
-            $('body').on('click', '.delete', function (e) {
+            /*
+            Handle restore Btn
+             */
+            $('body').on('click', '.deletep', function (e) {
                 e.preventDefault();
                 var subscriber_id = $(this).data('id');
                 $.get("/list-user" +'/' + subscriber_id , function (data) {
-                    $('#deleteModalHeading').html("Delete "+ data.name);
-                    $('#nameDelete').html(data.name);
-                    $('#saveBtnDelete').val("delete-user");
+                    $('#deleteModalHeading').html("Restore "+ data.name);
+                    $('#nameDelete').html("Are you sure you want to delete permanently <strong >" + data.name + "</strong>?");
+                    $('#saveBtnDelete').val("restore-user").text('Delete User');
                     let myModal = new Modal(document.getElementById('deleteModal'));
                     myModal.show();
                     $('#user_id_delete').val(subscriber_id);
                 })
             });
 
-            $("body").on("click","#saveBtnDelete",function(e){
+            $("body").on("click","#saveBtnDeleteP",function(e){
                 e.preventDefault()
                 var form = $(this).closest("form")[0];
                 var formData = new FormData($(this).closest("form")[0]);
                 $.ajax({
-                    url: '/users/'+ $('#user_id_delete').val(),
-                    type: 'DELETE',
+                    url: '/restore-user/'+ $('#user_id_delete').val(),
+                    type: 'post',
                     data: formData,
                     success: function (response) {
                         $(".print-success-msg").find("p").html('');
                         $(".print-success-msg").css('display','block');
-                        $(".print-success-msg").find("p").html("Deleted Successfully");
+                        $(".print-success-msg").find("p").html("Restored Successfully");
                         table.draw();
                         let myModal =  Modal.getOrCreateInstance(document.getElementById('deleteModal'));
                         myModal.hide();

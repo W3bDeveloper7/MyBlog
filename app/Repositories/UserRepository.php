@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Http\Resources\UserManageResource;
+use App\Http\Resources\UserManageTrashedResource;
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use DataTables;
@@ -84,9 +85,32 @@ class UserRepository implements UserRepositoryInterface{
 
     }
 
-    public function delete($blog)
+    public function delete($user)
     {
-        // TODO: Implement delete() method.
+        $user->status = 0;
+        $user->save();
+        $user = $user->delete();
+        if($user){
+            return response()->json(['message' => 'Deleted Successfully'], 201);
+        }
+    }
+
+    public function deletePermanent($user)
+    {
+        $user = $user->forceDelete();
+        if($user){
+            return response()->json(['message' => 'Deleted Successfully'], 201);
+        }
+    }
+
+    public function restore($user)
+    {
+        $user->status = 1;
+        $user->save();
+        $user = $user->restore();
+        if($user){
+            return response()->json(['message' => 'Restored Successfully'], 201);
+        }
     }
 
     public function getBlogs($request)
@@ -114,8 +138,55 @@ class UserRepository implements UserRepositoryInterface{
 
     }
 
-    public function getUsers($request)
+    /*
+     * Get Trashed users
+     */
+    public function trashed($request)
     {
-        // TODO: Implement getUsers() method.
+        if($request->ajax() || $request->wantsJson()){
+            $data = User::onlyTrashed()->latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->setTransformer(function ($item){
+                    return UserManageTrashedResource::make($item)->resolve();
+                })
+                ->filter(function ($instance) use ($request) {
+                    if (!empty($request->get('name'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['name'], $request->get('name')) ? true : false;
+                        });
+                    }
+
+                    if (!empty($request->get('username'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['username'], $request->get('username')) ? true : false;
+                        });
+                    }
+
+                    if (!empty($request->get('status'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['status'], $request->get('status')) ? true : false;
+                        });
+                    }
+
+                    if (!empty($request->get('role_id'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains($row['role_id'], $request->get('role_id')) ? true : false;
+                        });
+                    }
+
+                    if (!empty($request->get('search'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            if (Str::contains(Str::lower($row['name']), Str::lower($request->get('search')))) {
+                                return true;
+                            }
+
+                            return false;
+                        });
+                    }
+                }, true)
+                ->make(true);
+        }
+        return view('subscribers.trashed');
     }
 }

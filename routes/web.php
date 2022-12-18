@@ -32,6 +32,12 @@ Route::group(['middleware'=>['auth:web']],function (){
     Route::get('users', [UserController::class, 'index'])->name('users.index')->middleware('role:Admin');
     Route::get('/list-user/{user}', [UserController::class, 'show'])->name('users.show')->middleware('role:Admin');
     Route::post('users', [UserController::class, 'store'])->name('users.store');
+    Route::delete('users/{user}', [UserController::class, 'delete'])->name('users.delete');
+    Route::post('restore-user/{user}', [UserController::class, 'restoreUser'])->name('users.restore');
+    Route::post('delete-user-permanent/{user}', [UserController::class, 'deletePermanent'])->name('users.delete.permanent');
+    Route::get('trashed-users', [UserController::class, 'trashed'])->name('users.trashed')->middleware('role:Admin');
+
+
 });
 
 

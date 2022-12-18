@@ -65,6 +65,9 @@
                                         <a class="dropdown-item" href="{{route('users.index')}}">
                                             {{ __('Manage Users') }}
                                         </a>
+                                        <a class="dropdown-item" href="{{route('users.trashed')}}">
+                                            {{ __('Manage Trashed Users') }}
+                                        </a>
                                         <a class="dropdown-item" href="{{route('blogs.index')}}">
                                             {{ __('Manage Blogs') }}
                                         </a>
