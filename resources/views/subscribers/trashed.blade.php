@@ -244,10 +244,10 @@
                 e.preventDefault();
                 var subscriber_id = $(this).data('id');
                 $.get("/list-user" +'/' + subscriber_id , function (data) {
-                    $('#deleteModalHeading').html("Restore "+ data.name);
-                    $('#nameDelete').html("Are you sure you want to delete permanently <strong >" + data.name + "</strong>?");
-                    $('#saveBtnDelete').val("restore-user").text('Delete User');
-                    let myModal = new Modal(document.getElementById('deleteModal'));
+                    $('#deleteModalHeadingP').html("Delete Permanently "+ data.name);
+                    $('#nameDeleteP').html("Are you sure you want to delete permanently <strong >" + data.name + "</strong>?");
+                    $('#saveBtnDeleteP').val("restore-user").text('Delete User');
+                    let myModal = new Modal(document.getElementById('deleteModalP'));
                     myModal.show();
                     $('#user_id_delete').val(subscriber_id);
                 })
@@ -258,7 +258,7 @@
                 var form = $(this).closest("form")[0];
                 var formData = new FormData($(this).closest("form")[0]);
                 $.ajax({
-                    url: '/restore-user/'+ $('#user_id_delete').val(),
+                    url: '/delete-user-permanent/'+ $('#user_id_delete').val(),
                     type: 'post',
                     data: formData,
                     success: function (response) {
@@ -266,7 +266,7 @@
                         $(".print-success-msg").css('display','block');
                         $(".print-success-msg").find("p").html("Restored Successfully");
                         table.draw();
-                        let myModal =  Modal.getOrCreateInstance(document.getElementById('deleteModal'));
+                        let myModal =  Modal.getOrCreateInstance(document.getElementById('deleteModalP'));
                         myModal.hide();
                     },
                     error: function (response){
