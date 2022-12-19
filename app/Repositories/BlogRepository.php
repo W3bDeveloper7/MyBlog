@@ -10,16 +10,17 @@ use App\Models\Blog;
 use DataTables;
 use Illuminate\Support\Str;
 
-class BlogRepository implements BlogRepositoryInterface{
+class BlogRepository implements BlogRepositoryInterface
+{
 
     public function index($request, $dataTable)
     {
-
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             $data = Blog::latest()->get();
+
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->setTransformer(function ($item){
+                ->setTransformer(function ($item) {
                     return BlogManageResource::make($item)->resolve();
                 })
                 ->filter(function ($instance) use ($request) {
@@ -53,14 +54,16 @@ class BlogRepository implements BlogRepositoryInterface{
                 }, true)
                 ->make(true);
         }
+
         return view('blogs.index');
     }
 
     public function show($blog, $request)
     {
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             return $blog;
         }
+
         return view('blogs.view', compact('blog'));
     }
 
@@ -79,13 +82,12 @@ class BlogRepository implements BlogRepositoryInterface{
                 'blog_content' => $request->blog_content,
                 'image' => $imageName,
                 'published_at' => $request->published_at,
-                'user_id'   => auth()->id(),
+                'user_id' => auth()->id(),
             ]
         );
-        if($blog){
+        if ($blog) {
             return response()->json(['message' => 'success'], 200);
         }
-
     }
 
     public function delete($blog)
@@ -93,7 +95,7 @@ class BlogRepository implements BlogRepositoryInterface{
         $blog->status = 0;
         $blog->save();
         $blog = $blog->delete();
-        if($blog){
+        if ($blog) {
             return response()->json(['message' => 'Deleted Successfully'], 201);
         }
     }
@@ -101,7 +103,7 @@ class BlogRepository implements BlogRepositoryInterface{
     public function deletePermanent($blog)
     {
         $blog = $blog->forceDelete();
-        if($blog){
+        if ($blog) {
             return response()->json(['message' => 'Deleted Successfully'], 201);
         }
     }
@@ -111,34 +113,35 @@ class BlogRepository implements BlogRepositoryInterface{
         $blog->status = 1;
         $blog->save();
         $blog = $blog->restore();
-        if($blog){
+        if ($blog) {
             return response()->json(['message' => 'Restored Successfully'], 201);
         }
     }
 
     public function getBlogs($request)
     {
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             $data = BlogIndexResource::collection(Blog::where('status', 1)->latest()->paginate(9));
+
             return $data;
         }
-        return view('home');
 
+        return view('home');
     }
 
     public function getBlogsDT($request)
     {
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             return Datatables::of(Blog::where('status', 1)->latest())
-                ->setTransformer(function ($item){
+                ->setTransformer(function ($item) {
                     return BlogIndexResource::make($item)->resolve();
                 })
                 ->addIndexColumn()
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('blogs.list');
 
+        return view('blogs.list');
     }
 
     /*
@@ -146,11 +149,12 @@ class BlogRepository implements BlogRepositoryInterface{
      */
     public function trashed($request)
     {
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             $data = Blog::onlyTrashed()->latest()->get();
+
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->setTransformer(function ($item){
+                ->setTransformer(function ($item) {
                     return BlogManageTrashedResource::make($item)->resolve();
                 })
                 ->filter(function ($instance) use ($request) {
@@ -184,6 +188,7 @@ class BlogRepository implements BlogRepositoryInterface{
                 }, true)
                 ->make(true);
         }
+
         return view('blogs.trashed');
     }
 

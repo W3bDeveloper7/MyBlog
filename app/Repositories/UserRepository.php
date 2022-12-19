@@ -10,15 +10,17 @@ use DataTables;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-class UserRepository implements UserRepositoryInterface{
+class UserRepository implements UserRepositoryInterface
+{
 
     public function index($request)
     {
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             $data = User::latest()->get();
+
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->setTransformer(function ($item){
+                ->setTransformer(function ($item) {
                     return UserManageResource::make($item)->resolve();
                 })
                 ->filter(function ($instance) use ($request) {
@@ -48,7 +50,7 @@ class UserRepository implements UserRepositoryInterface{
 
                     if (!empty($request->get('search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                             if (Str::contains(Str::lower($row['name']), Str::lower($request->get('search')))) {
+                            if (Str::contains(Str::lower($row['name']), Str::lower($request->get('search')))) {
                                 return true;
                             }
 
@@ -58,17 +60,17 @@ class UserRepository implements UserRepositoryInterface{
                 }, true)
                 ->make(true);
         }
+
         return view('subscribers.index');
     }
 
     public function show($user, $request)
     {
-            return response()->json($user);
+        return response()->json($user);
     }
 
     public function store($request)
     {
-
         $user = User::updateOrCreate(
             ['id' => $request->user_id],
             [
@@ -79,10 +81,9 @@ class UserRepository implements UserRepositoryInterface{
                 'role_id' => $request->role_id,
             ]
         );
-        if($user){
+        if ($user) {
             return response()->json(['message' => 'success'], 200);
         }
-
     }
 
     public function delete($user)
@@ -90,7 +91,7 @@ class UserRepository implements UserRepositoryInterface{
         $user->status = 0;
         $user->save();
         $user = $user->delete();
-        if($user){
+        if ($user) {
             return response()->json(['message' => 'Deleted Successfully'], 201);
         }
     }
@@ -98,7 +99,7 @@ class UserRepository implements UserRepositoryInterface{
     public function deletePermanent($user)
     {
         $user = $user->forceDelete();
-        if($user){
+        if ($user) {
             return response()->json(['message' => 'Deleted Successfully'], 201);
         }
     }
@@ -108,34 +109,35 @@ class UserRepository implements UserRepositoryInterface{
         $user->status = 1;
         $user->save();
         $user = $user->restore();
-        if($user){
+        if ($user) {
             return response()->json(['message' => 'Restored Successfully'], 201);
         }
     }
 
     public function getBlogs($request)
     {
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             $data = BlogIndexResource::collection(Blog::latest()->paginate(9));
+
             return $data;
         }
-        return view('home');
 
+        return view('home');
     }
 
     public function getBlogsDT($request)
     {
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             return Datatables::of(Blog::latest())
-                ->setTransformer(function ($item){
+                ->setTransformer(function ($item) {
                     return BlogIndexResource::make($item)->resolve();
                 })
                 ->addIndexColumn()
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('blogs.list');
 
+        return view('blogs.list');
     }
 
     /*
@@ -143,11 +145,12 @@ class UserRepository implements UserRepositoryInterface{
      */
     public function trashed($request)
     {
-        if($request->ajax() || $request->wantsJson()){
+        if ($request->ajax() || $request->wantsJson()) {
             $data = User::onlyTrashed()->latest()->get();
+
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->setTransformer(function ($item){
+                ->setTransformer(function ($item) {
                     return UserManageTrashedResource::make($item)->resolve();
                 })
                 ->filter(function ($instance) use ($request) {
@@ -187,6 +190,7 @@ class UserRepository implements UserRepositoryInterface{
                 }, true)
                 ->make(true);
         }
+
         return view('subscribers.trashed');
     }
 }

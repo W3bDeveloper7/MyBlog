@@ -26,9 +26,9 @@ class BlogStoreRequest extends FormRequest
         return [
             'title' => 'required',
             'blog_content' => 'required',
-            'published_at'  => 'required',
-            'status'    => 'required|in:0,1',
-            'image'     => 'required|image|max:2048'
+            'published_at' => 'required',
+            'status' => 'required|in:0,1',
+            'image' => 'required|image|max:2048',
         ];
     }
 }
