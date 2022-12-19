@@ -26,7 +26,7 @@ class AuthController extends Controller
         {
             if ($row->status == 0)
             {
-                return redirect()->back()->with('message','Your Account Is DisActive Back To Admin');
+                return redirect()->back()->with('message','Your account has been disabled, get in touch with Admin');
             }
             if (Hash::check($request->password,$row->password))
             {
@@ -38,22 +38,6 @@ class AuthController extends Controller
             }
         }
         return redirect()->back()->with('message','Error Your Credential is Wrong');
-    }
-
-    public function getRegister()
-    {
-        return view('auth.register');
-    }
-
-    public function register(RegisterRequest $request)
-    {
-        $user = User::create($request->all());
-        if ($user)
-        {
-            auth()->login($user);
-            return redirect()->intended('/home');
-        }
-        return redirect()->back()->with('message','Error Happen try Again');
     }
 
     public function logout()

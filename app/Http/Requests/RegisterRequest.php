@@ -23,9 +23,10 @@ class RegisterRequest extends FormRequest
      */
     public function rules()
     {
+        $id = $this->request->get('user_id');
         return [
             'name'=> 'required|min:5',
-            'username' => 'required|unique:users,username,'.$this->user()->id,
+            'username' => 'required|unique:users,username,'.$id,
             'status'    => 'required|in:0,1',
             'password'  => 'required|min:8',
             'role_id'  => 'required|exists:roles,id',
