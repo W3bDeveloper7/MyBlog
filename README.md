@@ -46,6 +46,6 @@ php artisan serve
 ```
 Then
 ```
-npm run dev
+npm run dev or npm run build
 ```
 Any Questions: please feel free to message me @ amahmoud033@gmail.com ;)
