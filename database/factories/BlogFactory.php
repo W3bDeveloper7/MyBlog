@@ -23,6 +23,7 @@ class BlogFactory extends Factory
             'published_at' => now(),
             'image' => $this->faker->imageUrl(640, 480, 'sports', true, 'football'),
             'user_id'   => 1,
+            'status'    => 1,
         ];
     }
 }
