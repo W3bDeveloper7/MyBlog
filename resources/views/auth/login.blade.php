@@ -30,6 +30,9 @@
                             </div>
                         </div>
 
+                        <input id="fingerPrint" type="hidden"  name="finger_print" />
+
+
                         <div class="row mb-3">
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
 
@@ -75,4 +78,20 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+    <script>
+        // Initialize the agent at application startup.
+        const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3')
+            .then(FingerprintJS => FingerprintJS.load())
+
+        // Get the visitor identifier when you need it.
+        fpPromise
+            .then(fp => fp.get())
+            .then(result => {
+                // This is the visitor identifier:
+                const visitorId = result.visitorId
+               $('#fingerPrint').val(visitorId)
+            })
+    </script>
 @endsection
