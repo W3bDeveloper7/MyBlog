@@ -19,7 +19,7 @@ class BlogIndexResource extends JsonResource
         return [
             'id'    =>  $this->id,
             'title'    =>  $this->title,
-            'blog_content'    =>  Str::limit($this->blog_content, 1),
+            'blog_content'    =>  Str::limit($this->blog_content, 120, '...'),
             'image' => (filter_var($this->image, FILTER_VALIDATE_URL)) ? '<image class="card-img" src="'.$this->image.'">' : '<image class="card-img" src="'.url('images').'/'.$this->image.'">',
             'published_at' => \Carbon\Carbon::parse($this->published_at)->diffForHumans(),
             'status' => ($this->status === 1) ? 'Active' : 'Disabled',

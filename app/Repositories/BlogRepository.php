@@ -119,7 +119,7 @@ class BlogRepository implements BlogRepositoryInterface{
     public function getBlogs($request)
     {
         if($request->ajax() || $request->wantsJson()){
-            $data = BlogIndexResource::collection(Blog::latest()->paginate(9));
+            $data = BlogIndexResource::collection(Blog::where('status', 1)->latest()->paginate(9));
             return $data;
         }
         return view('home');
