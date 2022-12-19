@@ -86,7 +86,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="deleteForm" name="blogForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="user_id" id="user_id_delete" />
+                        <input type="hidden" name="blog_id" id="blog_id_delete" />
                         <input type="hidden" name="_method" value="DELETE" />
                     </form>
                     <p id="nameDelete" ></p>
@@ -108,7 +108,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="deleteForm" name="blogForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="user_id" id="user_id_delete" />
+                        <input type="hidden" name="blog_id" id="blog_id_deleteP" />
                         <input type="hidden" name="_method" value="DELETE" />
                     </form>
                     <p id="nameDeleteP" ></p>
@@ -125,27 +125,26 @@
 @section('scripts')
     <script>
         $(()=>{
-            var table = $('.subscriber-datatable').DataTable({
+            var table = $('.blogs-datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('users.trashed') }}",
+                    url: "{{ route('blogs.trashed') }}",
                     data: function (d) {
-                        d.name      = $('#name_search').val(),
-                        d.username  = $('#username_search').val(),
-                        d.status    = $('#status_search').val(),
-                        d.role_id   = $('#role_id_search').val(),
-                        d.search    = $('input[type="search"]').val()
+                        d.title      = $('#title_search').val(),
+                            d.published_at  = $('#publish_date_search').val(),
+                            d.status    = $('#status_search').val(),
+                            d.search    = $('input[type="search"]').val()
                     }
                 },
                 columns: [
 
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,
                         searchable: false},
-                    {data: 'name', name: 'name'},
-                    {data: 'username', name: 'username'},
+                    {data: 'title', name: 'title'},
+                    {data: 'image', name: 'image'},
+                    {data: 'published_at', name: 'published_at'},
                     {data: 'status', name: 'status'},
-                    {data: 'role_id', name: 'role_id'},
                     {
                         data: 'action',
                         name: 'action',
@@ -166,14 +165,14 @@
               */
             $('body').on('click', '.restore', function (e) {
                 e.preventDefault();
-                var subscriber_id = $(this).data('id');
-                $.get("/list-user" +'/' + subscriber_id , function (data) {
-                    $('#deleteModalHeading').html("Restore "+ data.name);
-                    $('#nameDelete').html("Are you sure you want to restore <strong >" + data.name + "</strong>?");
-                    $('#saveBtnDelete').val("restore-user").text('Restore User');
+                var blog_id = $(this).data('id');
+                $.get("/list-blog" +'/' + blog_id , function (data) {
+                    $('#deleteModalHeading').html("Restore "+ data.title);
+                    $('#nameDelete').html("Are you sure you want to restore <strong >" + data.title + "</strong>?");
+                    $('#saveBtnDelete').val("restore-blog").text('Restore Blog');
                     let myModal = new Modal(document.getElementById('deleteModal'));
                     myModal.show();
-                    $('#user_id_delete').val(subscriber_id);
+                    $('#blog_id_delete').val(blog_id);
                 })
             });
 
@@ -181,8 +180,9 @@
                 e.preventDefault()
                 var form = $(this).closest("form")[0];
                 var formData = new FormData($(this).closest("form")[0]);
+                console.log($('#blog_id_delete').val())
                 $.ajax({
-                    url: '/restore-user/'+ $('#user_id_delete').val(),
+                    url: '/restore-blog/' + $('#blog_id_delete').val() ,
                     type: 'post',
                     data: formData,
                     success: function (response) {
@@ -208,7 +208,7 @@
         $('#customSearchBlog').click(function () {
             $(".print-error-msg").css('display','none');
             $(".print-success-msg").css('display','none');
-            $('#searchBtn').val("search-Blog").text("search Subscribers");
+            $('#searchBtn').val("search-Blog").text("search Blogs");
             $('#searchForm').trigger("reset");
             $('#modelHeadingSearch').html("Custom Search Yajra");
             let myModal = new Modal(document.getElementById('searchModel'));
@@ -232,14 +232,14 @@
              */
             $('body').on('click', '.deletep', function (e) {
                 e.preventDefault();
-                var subscriber_id = $(this).data('id');
-                $.get("/list-user" +'/' + subscriber_id , function (data) {
-                    $('#deleteModalHeadingP').html("Delete Permanently "+ data.name);
-                    $('#nameDeleteP').html("Are you sure you want to delete permanently <strong >" + data.name + "</strong>?");
-                    $('#saveBtnDeleteP').val("restore-user").text('Delete User');
+                var blog_id = $(this).data('id');
+                $.get("/list-blog" +'/' + blog_id , function (data) {
+                    $('#deleteModalHeadingP').html("Delete Permanently "+ data.title);
+                    $('#nameDeleteP').html("Are you sure you want to delete permanently <strong >" + data.title + "</strong>?");
+                    $('#saveBtnDeleteP').val("restore-blog").text('Delete Blog');
                     let myModal = new Modal(document.getElementById('deleteModalP'));
                     myModal.show();
-                    $('#user_id_delete').val(subscriber_id);
+                    $('#blog_id_deleteP').val(blog_id);
                 })
             });
 
@@ -248,7 +248,7 @@
                 var form = $(this).closest("form")[0];
                 var formData = new FormData($(this).closest("form")[0]);
                 $.ajax({
-                    url: '/delete-user-permanent/'+ $('#user_id_delete').val(),
+                    url: '/delete-blog-permanent/'+ $('#blog_id_deleteP').val(),
                     type: 'post',
                     data: formData,
                     success: function (response) {

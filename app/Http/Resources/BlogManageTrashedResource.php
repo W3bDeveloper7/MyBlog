@@ -23,9 +23,9 @@ class BlogManageTrashedResource extends JsonResource
             'published_at' => \Carbon\Carbon::parse($this->published_at)->format('Y-m-d'),
             'status' => ($this->status === 1) ? 'Active' : 'Disabled',
             'user_id' => $this->user_id,
-            'action' => '<div class="btn-group" role="group" aria-label="Basic example">
-    <a href="javascript:void(0)" data-id="'.$this->id.'" class="restore btn btn-info btn-sm">Restore User</a> <a href="javascript:void(0)" data-id="'.$this->id.'" class="deletep btn btn-danger btn-sm">Delete Permanently</a>
-</div>',
+            'action' => '
+    <a href="javascript:void(0)" data-id="'.$this->id.'" class="restore btn btn-info btn-sm">Restore Blog</a> <a href="javascript:void(0)" data-id="'.$this->id.'" class="deletep btn btn-danger btn-sm">Delete Permanently</a>
+',
 
         ];
     }

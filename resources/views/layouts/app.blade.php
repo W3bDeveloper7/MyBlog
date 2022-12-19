@@ -71,6 +71,9 @@
                                         <a class="dropdown-item" href="{{route('blogs.index')}}">
                                             {{ __('Manage Blogs') }}
                                         </a>
+                                        <a class="dropdown-item" href="{{route('blogs.trashed')}}">
+                                            {{ __('Manage Trashed Blogs') }}
+                                        </a>
                                     @endif
 
                                     <a class="dropdown-item" href="{{ route('logout') }}"

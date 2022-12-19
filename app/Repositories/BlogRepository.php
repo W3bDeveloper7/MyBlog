@@ -90,7 +90,30 @@ class BlogRepository implements BlogRepositoryInterface{
 
     public function delete($blog)
     {
-        // TODO: Implement delete() method.
+        $blog->status = 0;
+        $blog->save();
+        $blog = $blog->delete();
+        if($blog){
+            return response()->json(['message' => 'Deleted Successfully'], 201);
+        }
+    }
+
+    public function deletePermanent($blog)
+    {
+        $blog = $blog->forceDelete();
+        if($blog){
+            return response()->json(['message' => 'Deleted Successfully'], 201);
+        }
+    }
+
+    public function restore($blog)
+    {
+        $blog->status = 1;
+        $blog->save();
+        $blog = $blog->restore();
+        if($blog){
+            return response()->json(['message' => 'Restored Successfully'], 201);
+        }
     }
 
     public function getBlogs($request)
@@ -131,15 +154,15 @@ class BlogRepository implements BlogRepositoryInterface{
                     return BlogManageTrashedResource::make($item)->resolve();
                 })
                 ->filter(function ($instance) use ($request) {
-                    if (!empty($request->get('name'))) {
+                    if (!empty($request->get('title'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                            return Str::contains($row['name'], $request->get('name')) ? true : false;
+                            return Str::contains($row['title'], $request->get('title')) ? true : false;
                         });
                     }
 
-                    if (!empty($request->get('username'))) {
+                    if (!empty($request->get('published_at'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                            return Str::contains($row['username'], $request->get('username')) ? true : false;
+                            return Str::contains($row['published_at'], $request->get('published_at')) ? true : false;
                         });
                     }
 
@@ -149,15 +172,9 @@ class BlogRepository implements BlogRepositoryInterface{
                         });
                     }
 
-                    if (!empty($request->get('role_id'))) {
-                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                            return Str::contains($row['role_id'], $request->get('role_id')) ? true : false;
-                        });
-                    }
-
                     if (!empty($request->get('search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                            if (Str::contains(Str::lower($row['name']), Str::lower($request->get('search')))) {
+                            if (Str::contains(Str::lower($row['title']), Str::lower($request->get('search')))) {
                                 return true;
                             }
 

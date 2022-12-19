@@ -20,7 +20,8 @@ class BlogController extends Controller
         return $this->blogRepository->index($request, $dataTable);
     }
 
-    public function show(Blog $blog, Request $request){
+    public function show($blog, Request $request){
+        $blog = Blog::withTrashed()->find($blog);
         return $this->blogRepository->show($blog, $request);
     }
 
