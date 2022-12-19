@@ -40,7 +40,8 @@
                                 item.image +
                                 '<div class="card-img-overlay"> <a href="#" class="btn btn-light btn-sm">Myblog</a> </div>' +
                                 '<div class="card-body"> <h4 class="card-title">'+ item.title +'<small class="text-muted cat"> <i class="far fa-clock text-info"></i> '+ item.published_at +' </small>' +
-                                '<br><br><a href="/list-blog/'+ item.id +'" class="btn btn-primary" style="z-index: 9;position: relative;">Read More</a></div></div></div>';
+                                '<p class="text-secondary pt-2 small text-center" >'+ item.blog_content +' </p>'+
+                                '<a href="/list-blog/'+ item.id +'" class="btn btn-primary" style="z-index: 9;position: relative;">Read More</a></div></div></div>';
 
                         })
                         $.each (response.meta.links, function (index, item) {
