@@ -41,11 +41,14 @@ php artisan storage:link
 ```
 
 Now the project is ready, just run the server command if you are on local:
-```
-php artisan serve
-```
-Then
+
 ```
 npm run dev or npm run build
 ```
+Then
+
+```
+php artisan serve
+```
+
 Any Questions: please feel free to message me @ amahmoud033@gmail.com ;)
