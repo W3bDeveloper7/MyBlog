@@ -129,7 +129,7 @@ class BlogRepository implements BlogRepositoryInterface{
     public function getBlogsDT($request)
     {
         if($request->ajax() || $request->wantsJson()){
-            return Datatables::of(Blog::latest())
+            return Datatables::of(Blog::where('status', 1)->latest())
                 ->setTransformer(function ($item){
                     return BlogIndexResource::make($item)->resolve();
                 })
