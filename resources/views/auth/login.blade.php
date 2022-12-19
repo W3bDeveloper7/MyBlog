@@ -30,7 +30,7 @@
                             </div>
                         </div>
 
-                        <input id="fingerPrint" type="hidden"  name="finger_print" />
+{{--                        <input id="fingerPrint" type="hidden"  name="fingerprint" />--}}
 
 
                         <div class="row mb-3">
@@ -80,18 +80,18 @@
 </div>
 @endsection
 @section('scripts')
-    <script>
-        // Initialize the agent at application startup.
-        const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3')
-            .then(FingerprintJS => FingerprintJS.load())
+{{--    <script>--}}
+{{--        // Initialize the agent at application startup.--}}
+{{--        const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3')--}}
+{{--            .then(FingerprintJS => FingerprintJS.load())--}}
 
-        // Get the visitor identifier when you need it.
-        fpPromise
-            .then(fp => fp.get())
-            .then(result => {
-                // This is the visitor identifier:
-                const visitorId = result.visitorId
-               $('#fingerPrint').val(visitorId)
-            })
-    </script>
+{{--        // Get the visitor identifier when you need it.--}}
+{{--        fpPromise--}}
+{{--            .then(fp => fp.get())--}}
+{{--            .then(result => {--}}
+{{--                // This is the visitor identifier:--}}
+{{--                const visitorId = result.visitorId--}}
+{{--               $('#fingerPrint').val(visitorId)--}}
+{{--            })--}}
+{{--    </script>--}}
 @endsection

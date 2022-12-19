@@ -28,12 +28,19 @@ class AuthController extends Controller
             {
                 return redirect()->back()->with('message','Your account has been disabled, get in touch with Admin');
             }
+            //check device uuid
+            if (!empty($row->fingerprint) && $request->fingerprint() !== $row->fingerprint)
+            {
+                return redirect()->back()->with('message','Please Login from your verified device, login limited by one device');
+            }
+
             if (Hash::check($request->password,$row->password))
             {
-                auth()->login($row,$request->remember);
-                if(!auth()->user()->isAdmin()){
-                    Auth::logoutOtherDevices($request->password);
+                if(empty($row->fingerprint)){
+                    $row->fingerprint = $request->fingerprint();
+                    $row->save();
                 }
+                auth()->login($row,$request->remember);
                 return redirect()->intended('/');
             }
         }
